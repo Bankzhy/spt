@@ -5,6 +5,7 @@ import logging
 from typing import Union, Tuple
 import os
 
+from data_preprocessing.TLDataset import TLDataset
 from models.bart import BartForClassificationAndGeneration
 from data.vocab import Vocab, load_vocab, init_vocab
 from data.dataset import init_dataset
@@ -39,23 +40,50 @@ def run_summarization(
     # --------------------------------------------------
     # datasets
     # --------------------------------------------------
-    logger.info('-' * 100)
-    logger.info('Loading datasets')
-    datasets = dict()
-    splits = ['test'] if only_test else ['train', 'valid', 'test']
-    for split in splits:
-        datasets[split] = init_dataset(args=args,
-                                       mode=enums.TRAINING_MODE_FINE_TUNE,
-                                       task=enums.TASK_SUMMARIZATION,
-                                       language=args.summarization_language,
-                                       split=split)
-        logger.info(f'The size of {split} set: {len(datasets[split])}')
-    if args.train_subset_ratio and 'train' in datasets:
-        datasets['train'] = datasets['train'].subset(args.train_subset_ratio)
-        logger.info(f'The train is trimmed to subset due to the argument: train_subset_ratio={args.train_subset_ratio}')
-        logger.info('The size of trimmed train set: {}'.format(len(datasets['train'])))
+    # logger.info('-' * 100)
+    # logger.info('Loading datasets')
+    # datasets = dict()
+    # splits = ['test'] if only_test else ['train', 'valid', 'test']
+    # for split in splits:
+    #     datasets[split] = init_dataset(args=args,
+    #                                    mode=enums.TRAINING_MODE_FINE_TUNE,
+    #                                    task=enums.TASK_SUMMARIZATION,
+    #                                    language=args.summarization_language,
+    #                                    split=split)
+    #     logger.info(f'The size of {split} set: {len(datasets[split])}')
+    # if args.train_subset_ratio and 'train' in datasets:
+    #     datasets['train'] = datasets['train'].subset(args.train_subset_ratio)
+    #     logger.info(f'The train is trimmed to subset due to the argument: train_subset_ratio={args.train_subset_ratio}')
+    #     logger.info('The size of trimmed train set: {}'.format(len(datasets['train'])))
+    #
+    # logger.info('Datasets loaded successfully')
 
-    logger.info('Datasets loaded successfully')
+    logger.info('-' * 100)
+    logger.info('Loading and parsing datasets')
+
+    train_dataset = TLDataset(
+            args=args,
+            logger=logger,
+            dataset_type='train',
+            language='java',
+    )
+    logger.info(f'The size of training set: {len(train_dataset)}')
+
+    eval_dataset = TLDataset(
+            args=args,
+            logger=logger,
+            dataset_type='valid',
+            language='java',
+    )
+    logger.info(f'The size of eval set: {len(eval_dataset)}')
+
+    test_dataset = TLDataset(
+        args=args,
+        logger=logger,
+        dataset_type='test',
+        language='java',
+    )
+    logger.info(f'The size of training set: {len(test_dataset)}')
 
     # --------------------------------------------------
     # vocabs
@@ -77,21 +105,21 @@ def run_summarization(
                                 name=args.code_vocab_name,
                                 method=args.code_tokenize_method,
                                 vocab_size=args.code_vocab_size,
-                                datasets=[datasets['train'].codes],
+                                datasets=[train_dataset.codes],
                                 ignore_case=True,
                                 save_root=args.vocab_root)
         nl_vocab = init_vocab(vocab_save_dir=args.vocab_save_dir,
                               name=args.nl_vocab_name,
                               method=args.nl_tokenize_method,
                               vocab_size=args.nl_vocab_size,
-                              datasets=[datasets['train'].nls],
+                              datasets=[train_dataset.nls],
                               ignore_case=True,
                               save_root=args.vocab_root,
                               index_offset=len(code_vocab))
         ast_vocab = init_vocab(vocab_save_dir=args.vocab_save_dir,
                                name=args.ast_vocab_name,
                                method='word',
-                               datasets=[datasets['train'].asts],
+                               datasets=[train_dataset.asts],
                                save_root=args.vocab_root,
                                index_offset=len(code_vocab) + len(nl_vocab))
     logger.info(f'The size of code vocabulary: {len(code_vocab)}')
@@ -181,7 +209,8 @@ def run_summarization(
                                              do_train=True,
                                              do_eval=True,
                                              do_predict=True,
-                                             evaluation_strategy=IntervalStrategy.EPOCH,
+                                             evaluation_strategy=IntervalStrategy.STEPS,
+                                             eval_steps=2500,
                                              prediction_loss_only=False,
                                              per_device_train_batch_size=args.batch_size,
                                              per_device_eval_batch_size=args.eval_batch_size,
@@ -194,8 +223,9 @@ def run_summarization(
                                              warmup_steps=args.warmup_steps,
                                              logging_dir=os.path.join(args.tensor_board_root, enums.TASK_SUMMARIZATION),
                                              logging_strategy=IntervalStrategy.STEPS,
-                                             logging_steps=args.logging_steps,
-                                             save_strategy=IntervalStrategy.EPOCH,
+                                             logging_steps=2500,
+                                             save_strategy=IntervalStrategy.STEPS,
+                                             save_steps=2500,
                                              save_total_limit=5,
                                              seed=args.random_seed,
                                              fp16=args.fp16,
@@ -217,8 +247,8 @@ def run_summarization(
                           model=model,
                           args=training_args,
                           data_collator=None,
-                          train_dataset=datasets['train'] if 'train' in datasets else None,
-                          eval_dataset=datasets['valid'] if 'valid' in datasets else None,
+                          train_dataset=train_dataset,
+                          eval_dataset=eval_dataset,
                           tokenizer=nl_vocab,
                           model_init=None,
                           compute_metrics=compute_valid_metrics,
@@ -258,7 +288,7 @@ def run_summarization(
     logger.info('-' * 100)
     logger.info('Start testing')
     trainer.compute_metrics = compute_test_metrics
-    predict_results = trainer.predict(test_dataset=datasets['test'],
+    predict_results = trainer.predict(test_dataset=test_dataset,
                                       metric_key_prefix='test',
                                       max_length=args.max_nl_len,
                                       num_beams=args.beam_width)

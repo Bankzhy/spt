@@ -33,19 +33,24 @@ class RuntimeArguments:
                   'help': 'Whether to test only'}
     )
 
+    dataset_dir: str = field(
+        default='./dataset',
+        metadata={'help': 'Directory of trained vocabs'}
+    )
+
     task: str = field(
-        default='search',
+        default='summarization',
         metadata={'help': 'Downstream task',
                   'choices': enums.ALL_DOWNSTREAM_TASKS}
     )
 
     trained_vocab: str = field(
-        default='../pre_trained/vocabs/',
+        default='./pre_trained/vocabs/',
         metadata={'help': 'Directory of trained vocabs'}
     )
 
     trained_model: str = field(
-        default='../pre_trained/models/all/',
+        default='./pre_trained/models/all/',
         metadata={'help': 'Directory of trained model'}
     )
 
@@ -66,12 +71,12 @@ class RuntimeArguments:
     )
 
     batch_size: int = field(
-        default=16,
+        default=64,
         metadata={'help': 'Batch size for training on each device'}
     )
 
     eval_batch_size: int = field(
-        default=16,
+        default=64,
         metadata={'help': 'Batch size for evaluation on each device'}
     )
 

@@ -3,16 +3,21 @@ import tree_sitter
 from tree_sitter import Language, Parser
 import re
 
+from tree_sitter_languages import get_parser, get_language
+
 import enums
 
 
-LANGUAGE = {enums.LANG_GO: Language('data/asts/build/my-languages.so', 'go'),
-            enums.LANG_JAVASCRIPT: Language('data/asts/build/my-languages.so', 'javascript'),
-            enums.LANG_PYTHON: Language('data/asts/build/my-languages.so', 'python'),
-            enums.LANG_JAVA: Language('data/asts/build/my-languages.so', 'java'),
-            enums.LANG_PHP: Language('data/asts/build/my-languages.so', 'php'),
-            enums.LANG_RUBY: Language('data/asts/build/my-languages.so', 'ruby'),
-            enums.LANG_C_SHARP: Language('data/asts/build/my-languages.so', 'c_sharp')}
+LANGUAGE = {
+            # enums.LANG_GO: Language('data/asts/build/my-languages.so', 'go'),
+            # enums.LANG_JAVASCRIPT: Language('data/asts/build/my-languages.so', 'javascript'),
+            # enums.LANG_PYTHON: Language('data/asts/build/my-languages.so', 'python'),
+            # enums.LANG_JAVA: Language('data/asts/build/my-languages.so', 'java'),
+            # enums.LANG_PHP: Language('data/asts/build/my-languages.so', 'php'),
+            # enums.LANG_RUBY: Language('data/asts/build/my-languages.so', 'ruby'),
+            # enums.LANG_C_SHARP: Language('data/asts/build/my-languages.so', 'c_sharp')
+            enums.LANG_JAVA: get_language("java")
+            }
 
 # LANGUAGE = {enums.LANG_GO: Language('build/my-languages.so', 'go'),
 #             enums.LANG_JAVASCRIPT: Language('build/my-languages.so', 'javascript'),
@@ -249,6 +254,7 @@ def parse_ast(source, lang):
         tree_sitter.Node: Method/Function root node
 
     """
+
     parser.set_language(LANGUAGE[lang])
     if lang in SOURCE_PREFIX_POSTFIX:
         source = SOURCE_PREFIX_POSTFIX[lang][0] + source + SOURCE_PREFIX_POSTFIX[lang][1]

@@ -302,6 +302,53 @@ def load_pre_train_dataset(file, lang):
         sources, codes, names, codes_wo_name, docs = parse_json_file(file, lang=lang)
         return sources, codes, names, codes_wo_name, docs
 
+def fetch_method_name_from_code(code):
+    code_l = code.split('(')
+    code_str = code_l[0]
+    code_l = code_str.split(' ')
+    method_name = code_l[len(code_l)-1]
+    return method_name
+
+def load_tl_dataset_from_dir(tag, dataset_dir):
+    all_codes = []
+    all_docs = []
+    all_names = []
+    all_asts = []
+
+    if tag == 'train':
+        spath = os.path.join(dataset_dir, "train.json")
+    elif tag == 'valid':
+        spath = os.path.join(dataset_dir, "valid.json")
+    else:
+        spath = os.path.join(dataset_dir, "test.json")
+
+    with open(spath, encoding='ISO-8859-1') as f:
+        lines = f.readlines()
+        print("loading dataset:", spath)
+        for line in lines:
+            data = json.loads(line.strip())
+            # try:
+            name = fetch_method_name_from_code(data['code'])
+
+            source = data['code'].strip()
+            source = remove_comments_and_docstrings(source, "java")
+            source = replace_string_literal(source)
+
+            all_codes.append(source)
+            all_docs.append(data['comment'])
+            all_names.append(name)
+            try:
+                ast, name = generate_single_ast_nl(source=source, lang="java")
+            except Exception as e:
+                ast = ""
+            all_asts.append(ast)
+            # except Exception as e:
+                # print(e)
+                # print(data["id"])
+                # continue
+
+    return all_codes, all_docs, all_asts, all_names
+
 
 def load_dataset_from_dir(dataset_dir):
     """
