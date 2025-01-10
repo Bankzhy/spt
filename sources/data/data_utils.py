@@ -857,9 +857,9 @@ def parse_for_clone(path, mapping):
     with open(path, encoding='utf-8') as f:
         for line in tqdm(f.readlines()):
             id_1, id_2, label = line.split('\t')
-            print("*"*10)
-            print(id_1)
-            print(id_2)
+            # print("*"*10)
+            # print(id_1)
+            # print(id_2)
             # id_1 = id_1.split("/")[-1].split(".")[0]
             # id_2 = id_2.split("/")[-1].split(".")[0]
             try:
