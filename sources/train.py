@@ -2,6 +2,7 @@ import logging
 from typing import Union, Tuple
 
 import enums
+from downstream_tasks.clone import run_clone
 from models.bart import BartForClassificationAndGeneration
 from data.vocab import Vocab
 
@@ -82,6 +83,11 @@ def train(
                        only_test=args.only_test)
     elif task == enums.TASK_BUG_FIX:
         run_bug_fix(args=args,
+                    trained_model=trained_model,
+                    trained_vocab=trained_vocab,
+                    only_test=args.only_test)
+    elif task == enums.TASK_CLONE_DETECTION:
+        run_clone(args=args,
                     trained_model=trained_model,
                     trained_vocab=trained_vocab,
                     only_test=args.only_test)

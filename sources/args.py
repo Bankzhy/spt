@@ -39,7 +39,7 @@ class RuntimeArguments:
     )
 
     task: str = field(
-        default='summarization',
+        default='clone',
         metadata={'help': 'Downstream task',
                   'choices': enums.ALL_DOWNSTREAM_TASKS}
     )

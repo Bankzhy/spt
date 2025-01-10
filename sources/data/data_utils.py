@@ -815,6 +815,7 @@ def load_clone_mapping(dataset_root):
 
     """
     path = os.path.join(dataset_root, 'fine_tune', enums.TASK_CLONE_DETECTION, 'data.jsonl')
+    print(path)
     if not os.path.exists(path):
         return None
     mapping = dict()
@@ -856,6 +857,8 @@ def parse_for_clone(path, mapping):
     with open(path, encoding='utf-8') as f:
         for line in tqdm(f.readlines()):
             id_1, id_2, label = line.split('\t')
+            id_1 = id_1.split("/")[-1].split(".")[0]
+            id_2 = id_2.split("/")[-1].split(".")[0]
             try:
                 source_1 = mapping[id_1]
                 source_1 = remove_comments_and_docstrings(source_1, lang=enums.LANG_JAVA)
