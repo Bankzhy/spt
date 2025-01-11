@@ -50,7 +50,7 @@ def run_clone(
                                        language=args.summarization_language,
                                        clone_mapping=clone_mapping,
                                        split=split)
-        datasets[split] = datasets[split].subset(0.1)
+        datasets[split] = datasets[split].subset(0.001)
         logger.info(f'The size of {split} set: {len(datasets[split])}')
     if args.train_subset_ratio and 'train' in datasets:
         datasets['train'] = datasets['train'].subset(args.train_subset_ratio)
@@ -168,7 +168,6 @@ def run_clone(
         from sklearn.metrics import precision_score
         precision = precision_score(labels, predictions)
         from sklearn.metrics import f1_score
-        print(labels)
         f1 = f1_score(labels, predictions)
         result = {
             "eval_recall": float(recall),
