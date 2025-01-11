@@ -28,7 +28,7 @@ class RuntimeArguments:
     )
 
     only_test: bool = field(
-        default=False,
+        default=True,
         metadata={'action': 'store_true',
                   'help': 'Whether to test only'}
     )
