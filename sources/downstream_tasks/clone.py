@@ -293,9 +293,7 @@ def run_clone(
     logger.info('Start testing')
     trainer.compute_metrics = compute_test_metrics
     predict_results = trainer.predict(test_dataset=datasets['test'],
-                                      metric_key_prefix='test',
-                                      max_length=args.max_nl_len,
-                                      num_beams=args.beam_width)
+                                      metric_key_prefix='test',)
     predict_metrics = predict_results.metrics
     references = predict_metrics.pop('test_references')
     candidates = predict_metrics.pop('test_candidates')
