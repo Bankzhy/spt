@@ -41,7 +41,7 @@ def run_clone(
     logger.info('-' * 100)
     logger.info('Loading datasets')
     datasets = dict()
-    splits = ['test'] if only_test else ['train', 'valid', 'test']
+    splits = ['train', 'valid', 'test']
     for split in splits:
         clone_mapping = load_clone_mapping(dataset_root=args.dataset_save_dir)
         datasets[split] = init_dataset(args=args,
