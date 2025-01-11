@@ -168,6 +168,7 @@ def run_clone(
         from sklearn.metrics import precision_score
         precision = precision_score(labels, predictions)
         from sklearn.metrics import f1_score
+        print(labels)
         f1 = f1_score(labels, predictions)
         result = {
             "eval_recall": float(recall),
