@@ -295,28 +295,28 @@ def run_clone(
     predict_results = trainer.predict(test_dataset=datasets['test'],
                                       metric_key_prefix='test',)
     predict_metrics = predict_results.metrics
-    references = predict_metrics.pop('test_references')
-    candidates = predict_metrics.pop('test_candidates')
+    # references = predict_metrics.pop('test_references')
+    # candidates = predict_metrics.pop('test_candidates')
     trainer.log_metrics(split='test', metrics=predict_metrics)
     trainer.save_metrics(split='test', metrics=predict_metrics)
     # save testing results
-    with open(os.path.join(args.output_root, f'{enums.TASK_CLONE_DETECTION}_test_results.txt'),
-              mode='w', encoding='utf-8') as result_f, \
-            open(os.path.join(args.output_root, f'{enums.TASK_CLONE_DETECTIONN}_test_refs.txt'),
-                 mode='w', encoding='utf-8') as refs_f, \
-            open(os.path.join(args.output_root, f'{enums.TASK_CLONE_DETECTION}_test_cans.txt'),
-                 mode='w', encoding='utf-8') as cans_f:
-        sample_id = 0
-        for reference, candidate in zip(references, candidates):
-            result_f.write(f'sample {sample_id}:\n')
-            sample_id += 1
-            result_f.write(f'reference: {reference}\n')
-            result_f.write(f'candidate: {candidate}\n')
-            result_f.write('\n')
-            refs_f.write(reference + '\n')
-            cans_f.write(candidate + '\n')
-        for name, score in predict_metrics.items():
-            result_f.write(f'{name}: {score}\n')
+    # with open(os.path.join(args.output_root, f'{enums.TASK_CLONE_DETECTION}_test_results.txt'),
+    #           mode='w', encoding='utf-8') as result_f, \
+    #         open(os.path.join(args.output_root, f'{enums.TASK_CLONE_DETECTIONN}_test_refs.txt'),
+    #              mode='w', encoding='utf-8') as refs_f, \
+    #         open(os.path.join(args.output_root, f'{enums.TASK_CLONE_DETECTION}_test_cans.txt'),
+    #              mode='w', encoding='utf-8') as cans_f:
+    #     sample_id = 0
+    #     for reference, candidate in zip(references, candidates):
+    #         result_f.write(f'sample {sample_id}:\n')
+    #         sample_id += 1
+    #         result_f.write(f'reference: {reference}\n')
+    #         result_f.write(f'candidate: {candidate}\n')
+    #         result_f.write('\n')
+    #         refs_f.write(reference + '\n')
+    #         cans_f.write(candidate + '\n')
+    #     for name, score in predict_metrics.items():
+    #         result_f.write(f'{name}: {score}\n')
     logger.info('Testing finished')
     for name, score in predict_metrics.items():
         logger.info(f'{name}: {score}')
