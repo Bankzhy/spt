@@ -116,6 +116,7 @@ def run_clone(
             config = BartConfig.from_json_file(os.path.join(trained_model, 'config.json'))
             model = BartForClassificationAndGeneration.from_pretrained(os.path.join(trained_model, 'pytorch_model.bin'),
                                                                        config=config)
+            model.set_model_mode(enums.MODEL_MODE_CLS)
     else:
         logger.info('Building the model')
         config = BartConfig(vocab_size=len(code_vocab) + len(nl_vocab) + len(ast_vocab),
@@ -211,8 +212,9 @@ def run_clone(
                                              do_train=True,
                                              do_eval=True,
                                              do_predict=True,
-                                             evaluation_strategy=IntervalStrategy.EPOCH,
-                                             # eval_steps=100,
+                                             # evaluation_strategy=IntervalStrategy.EPOCH,
+                                             evaluation_strategy=IntervalStrategy.STEPS,
+                                             eval_steps=2500,
                                              prediction_loss_only=False,
                                              per_device_train_batch_size=args.batch_size,
                                              per_device_eval_batch_size=args.eval_batch_size,
@@ -226,8 +228,9 @@ def run_clone(
                                              logging_dir=os.path.join(args.tensor_board_root, enums.TASK_CLONE_DETECTION),
                                              logging_strategy=IntervalStrategy.STEPS,
                                              logging_steps=100,
-                                             save_strategy=IntervalStrategy.EPOCH,
-                                             # save_steps=100,
+                                             # save_strategy=IntervalStrategy.EPOCH,
+                                             save_strategy=IntervalStrategy.STEPS,
+                                             save_steps=2500,
                                              save_total_limit=3,
                                              seed=args.random_seed,
                                              fp16=args.fp16,
