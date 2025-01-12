@@ -37,7 +37,7 @@ def run_clone(
     # --------------------------------------------------
     # datasets
     # --------------------------------------------------
-    only_test = True
+    only_test = False
     logger.info('-' * 100)
     logger.info('Loading datasets')
     datasets = dict()
