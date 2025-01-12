@@ -50,6 +50,8 @@ def run_clone(
                                        language=args.summarization_language,
                                        clone_mapping=clone_mapping,
                                        split=split)
+        if split == 'valid':
+            datasets[split] = datasets[split].subset(0.1)
         # datasets[split] = datasets[split].subset(0.1)
         logger.info(f'The size of {split} set: {len(datasets[split])}')
     if args.train_subset_ratio and 'train' in datasets:
