@@ -247,7 +247,7 @@ class OptimizerArguments:
     """Arguments for optimizer, early stopping, warmup, grad clipping, label smoothing."""
 
     learning_rate: float = field(
-        default=5e-5,
+        default=2e-5,
         metadata={'help': 'Learning rate'}
     )
 
