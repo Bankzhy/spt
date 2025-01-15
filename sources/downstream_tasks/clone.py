@@ -244,7 +244,8 @@ def run_clone(
                                              eval_accumulation_steps=200,
                                              report_to=['tensorboard'],
                                              dataloader_pin_memory=True,
-                                             predict_with_generate=True)
+                                             predict_with_generate=False
+                                             )
     trainer = CodeCLSTrainer(main_args=args,
                           code_vocab=code_vocab,
                           ast_vocab=ast_vocab,
