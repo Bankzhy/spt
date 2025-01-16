@@ -270,7 +270,7 @@ def run_clone(
     if not only_test:
         logger.info('-' * 100)
         # logger.info('loading checkpoint')
-        last_checkpoint = get_last_checkpoint(os.path.join(args.checkpoint_root, enums.TASK_CLONE_DETECTION),)
+        last_checkpoint = get_last_checkpoint(r"/root/autodl-tmp/spt/outputs/default_model_20250116_131331/checkpoints/clone")
         logger.info('Start training')
         train_result = trainer.train(resume_from_checkpoint=last_checkpoint)
         # train_result = trainer.train()
