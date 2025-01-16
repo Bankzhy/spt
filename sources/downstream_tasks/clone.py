@@ -4,6 +4,7 @@ import os
 import sys
 
 import numpy as np
+import torch
 from transformers import BartConfig, IntervalStrategy, SchedulerType, Seq2SeqTrainingArguments, EarlyStoppingCallback
 from transformers.trainer_utils import get_last_checkpoint
 
@@ -52,6 +53,8 @@ def run_clone(
                                        split=split)
         if split == 'valid':
             datasets[split] = datasets[split].subset(0.1)
+        if split == 'test':
+            datasets[split] = torch.utils.data.Subset(datasets[split], list(range(0, 60000)))
         # datasets[split] = datasets[split].subset(0.1)
         logger.info(f'The size of {split} set: {len(datasets[split])}')
     if args.train_subset_ratio and 'train' in datasets:
@@ -241,7 +244,7 @@ def run_clone(
                                              greater_is_better=True,
                                              ignore_data_skip=False,
                                              label_smoothing_factor=args.label_smoothing,
-                                             eval_accumulation_steps=1000,
+                                             eval_accumulation_steps=100,
                                              report_to=['tensorboard'],
                                              dataloader_pin_memory=True,
                                              predict_with_generate=False
