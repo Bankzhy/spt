@@ -54,7 +54,7 @@ def run_clone(
         if split == 'valid':
             datasets[split] = datasets[split].subset(0.1)
         if split == 'test':
-            datasets[split] = torch.utils.data.Subset(datasets[split], list(range(60001, 120000)))
+            datasets[split] = torch.utils.data.Subset(datasets[split], list(range(120001, 180000)))
         # datasets[split] = datasets[split].subset(0.1)
         logger.info(f'The size of {split} set: {len(datasets[split])}')
     if args.train_subset_ratio and 'train' in datasets:
