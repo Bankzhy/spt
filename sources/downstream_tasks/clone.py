@@ -54,7 +54,7 @@ def run_clone(
         if split == 'valid':
             datasets[split] = datasets[split].subset(0.1)
         if split == 'test':
-            datasets[split] = torch.utils.data.Subset(datasets[split], list(range(0, 60000)))
+            datasets[split] = torch.utils.data.Subset(datasets[split], list(range(60001, 120000)))
         # datasets[split] = datasets[split].subset(0.1)
         logger.info(f'The size of {split} set: {len(datasets[split])}')
     if args.train_subset_ratio and 'train' in datasets:
@@ -204,6 +204,8 @@ def run_clone(
             "eval_recall": float(recall),
             "eval_precision": float(precision),
             "eval_f1": float(f1),
+            "predictions": predictions,
+            "labels": labels,
         }
 
         logger.info("***** Eval results *****")
