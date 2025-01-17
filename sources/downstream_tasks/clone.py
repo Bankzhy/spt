@@ -38,7 +38,7 @@ def run_clone(
     # --------------------------------------------------
     # datasets
     # --------------------------------------------------
-    only_test = False
+    only_test = True
     logger.info('-' * 100)
     logger.info('Loading datasets')
     datasets = dict()
@@ -110,44 +110,44 @@ def run_clone(
     # model
     # --------------------------------------------------
     logger.info('-' * 100)
-    if trained_model:
-        if isinstance(trained_model, BartForClassificationAndGeneration):
-            logger.info('Model is passed through parameter')
-            model = trained_model
-        else:
-            logger.info('Loading the model from file')
-            config = BartConfig.from_json_file(os.path.join(trained_model, 'config.json'))
-            model = BartForClassificationAndGeneration.from_pretrained(os.path.join(trained_model, 'pytorch_model.bin'),
-                                                                       config=config)
-            model.set_model_mode(enums.MODEL_MODE_CLS)
-    else:
-        logger.info('Building the model')
-        config = BartConfig(vocab_size=len(code_vocab) + len(nl_vocab) + len(ast_vocab),
-                            max_position_embeddings=1024,
-                            encoder_layers=args.n_layer,
-                            encoder_ffn_dim=args.d_ff,
-                            encoder_attention_heads=args.n_head,
-                            decoder_layers=args.n_layer,
-                            decoder_ffn_dim=args.d_ff,
-                            decoder_attention_heads=args.n_head,
-                            activation_function='gelu',
-                            d_model=args.d_model,
-                            dropout=args.dropout,
-                            use_cache=True,
-                            pad_token_id=Vocab.START_VOCAB.index(Vocab.PAD_TOKEN),
-                            bos_token_id=Vocab.START_VOCAB.index(Vocab.SOS_TOKEN),
-                            eos_token_id=Vocab.START_VOCAB.index(Vocab.EOS_TOKEN),
-                            is_encoder_decoder=True,
-                            decoder_start_token_id=Vocab.START_VOCAB.index(Vocab.SOS_TOKEN),
-                            forced_eos_token_id=Vocab.START_VOCAB.index(Vocab.EOS_TOKEN),
-                            max_length=args.max_nl_len,
-                            min_length=1,
-                            num_beams=args.beam_width,
-                            num_labels=2)
-        model = BartForClassificationAndGeneration(config)
+    # if trained_model:
+    #     if isinstance(trained_model, BartForClassificationAndGeneration):
+    #         logger.info('Model is passed through parameter')
+    #         model = trained_model
+    #     else:
+    #         logger.info('Loading the model from file')
+    #         config = BartConfig.from_json_file(os.path.join(trained_model, 'config.json'))
+    #         model = BartForClassificationAndGeneration.from_pretrained(os.path.join(trained_model, 'pytorch_model.bin'),
+    #                                                                    config=config)
+    #         model.set_model_mode(enums.MODEL_MODE_CLS)
+    # else:
+    #     logger.info('Building the model')
+    #     config = BartConfig(vocab_size=len(code_vocab) + len(nl_vocab) + len(ast_vocab),
+    #                         max_position_embeddings=1024,
+    #                         encoder_layers=args.n_layer,
+    #                         encoder_ffn_dim=args.d_ff,
+    #                         encoder_attention_heads=args.n_head,
+    #                         decoder_layers=args.n_layer,
+    #                         decoder_ffn_dim=args.d_ff,
+    #                         decoder_attention_heads=args.n_head,
+    #                         activation_function='gelu',
+    #                         d_model=args.d_model,
+    #                         dropout=args.dropout,
+    #                         use_cache=True,
+    #                         pad_token_id=Vocab.START_VOCAB.index(Vocab.PAD_TOKEN),
+    #                         bos_token_id=Vocab.START_VOCAB.index(Vocab.SOS_TOKEN),
+    #                         eos_token_id=Vocab.START_VOCAB.index(Vocab.EOS_TOKEN),
+    #                         is_encoder_decoder=True,
+    #                         decoder_start_token_id=Vocab.START_VOCAB.index(Vocab.SOS_TOKEN),
+    #                         forced_eos_token_id=Vocab.START_VOCAB.index(Vocab.EOS_TOKEN),
+    #                         max_length=args.max_nl_len,
+    #                         min_length=1,
+    #                         num_beams=args.beam_width,
+    #                         num_labels=2)
+    #     model = BartForClassificationAndGeneration(config)
 
-    # config = BartConfig.from_json_file(os.path.join('/root/autodl-tmp/spt/outputs/default_model_20250116_170248/models', 'config.json'))
-    # model = BartForClassificationAndGeneration.from_pretrained('/root/autodl-tmp/spt/outputs/default_model_20250116_170248/models', config=config, use_safetensors=True)
+    config = BartConfig.from_json_file(os.path.join('/root/autodl-tmp/spt/outputs/default_model_20250117_125532/models', 'config.json'))
+    model = BartForClassificationAndGeneration.from_pretrained('/root/autodl-tmp/spt/outputs/default_model_20250117_125532/models', config=config, use_safetensors=True)
 
     model.set_model_mode(enums.MODEL_MODE_CLS)
     # log model statistics
