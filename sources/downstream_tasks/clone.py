@@ -205,13 +205,14 @@ def run_clone(
             "eval_recall": float(recall),
             "eval_precision": float(precision),
             "eval_f1": float(f1),
-            "predictions": predictions.tolist(),
-            "labels": labels.tolist(),
+            "predictions": ",".join(str(i) for i in predictions.tolist()),
+            "labels": ",".join(str(i) for i in labels.tolist()),
         }
 
         logger.info("***** Eval results *****")
         for key in sorted(result.keys()):
-            logger.info("  %s = %s", key, str(round(result[key], 4)))
+            if key != 'predictions' and key != 'labels':
+                logger.info("  %s = %s", key, str(round(result[key], 4)))
 
         return result
 
