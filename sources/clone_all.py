@@ -31,6 +31,7 @@ def run():
         "eval_precision": float(precision),
         "eval_f1": float(f1),
     }
+    print(result)
 
     logger.info("***** Test results *****")
     for key in sorted(result.keys()):
