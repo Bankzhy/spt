@@ -17,6 +17,9 @@ def run():
                 predictions.extend(p)
                 labels.extend(l)
 
+    predictions = [int(x) for x in  predictions]
+    labels = [int(x) for x in labels]
+
     from sklearn.metrics import recall_score
     recall = recall_score(labels, predictions)
     from sklearn.metrics import precision_score
